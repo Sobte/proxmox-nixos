@@ -30,6 +30,7 @@ lib.mkIf cfg.enable {
         e2fsprogs
         gnutar
         swtpm
+        zstd
       ] ++ [ config.boot.zfs.package ];
       serviceConfig = {
         ExecStart = "${cfg.package}/bin/pvedaemon start";
@@ -98,6 +99,7 @@ lib.mkIf cfg.enable {
         e2fsprogs
         gnutar
         swtpm
+        zstd
       ] ++ [ config.boot.zfs.package ];
       unitConfig = {
         RefuseManualStart = true;
@@ -143,6 +145,7 @@ lib.mkIf cfg.enable {
       path = [
         pkgs.btrfs-progs
         pkgs.gnutar
+        pkgs.zstd
         config.boot.zfs.package
       ];
       serviceConfig = {
@@ -167,6 +170,7 @@ lib.mkIf cfg.enable {
         pkgs.btrfs-progs
         pkgs.e2fsprogs
         pkgs.gnutar
+        pkgs.zstd
         config.boot.zfs.package
       ];
       serviceConfig = {
