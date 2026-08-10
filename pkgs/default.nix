@@ -58,6 +58,7 @@ let
     pve-qemu-server = callPackage ./pve-qemu-server { };
     pve-rados2 = callPackage ./pve-rados2 { };
     pve-rs = callPackage ./pve-rs { };
+    pve-lxc-syscalld = callPackage ./pve-lxc-syscalld { };
     pve-storage = callPackage ./pve-storage { };
     pve-xtermjs = callPackage ./pve-xtermjs { };
     pve-yew-mobile-gui = callPackage ./pve-yew-mobile-gui { };
