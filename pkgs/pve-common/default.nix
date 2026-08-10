@@ -2,9 +2,11 @@
   lib,
   stdenv,
   fetchgit,
+  fetchurl,
   bash,
   coreutils,
   diffutils,
+  dpkg,
   iproute2,
   perl5,
   glibc,
@@ -21,11 +23,33 @@
 }:
 
 let
-  perlDeps = with perl5.pkgs; [
+  # nixpkgs still ships Crypt-OpenSSL-RSA 0.35 which disabled PKCS#1 v1.5
+  # padding entirely (CVE-2024-2467 / Marvin attack), breaking the signature
+  # path used by PVE::ACME (RS256 JWS) and PVE::Ticket. 0.38+ re-enabled
+  # PKCS#1 v1.5 for sign()/verify() while keeping it disabled for decrypt().
+  # See https://github.com/SaumonNet/proxmox-nixos/pull/225
+  perl5_ = perl5.override {
+    overrides = _: {
+      CryptOpenSSLRSA = perl5.pkgs.CryptOpenSSLRSA.overrideAttrs (_old: {
+        version = "0.41";
+        src = fetchurl {
+          url = "https://cpan.metacpan.org/authors/id/T/TI/TIMLEGGE/Crypt-OpenSSL-RSA-0.41.tar.gz";
+          sha256 = "08k86v1hg8ylz98q2yjcmsf8gg6k4szg6rb2bcj9r3mqjyc87yl2";
+        };
+        propagatedBuildInputs = (_old.propagatedBuildInputs or [ ]) ++ [
+          perl5.pkgs.CryptOpenSSLBignum
+        ];
+        doCheck = false;
+      });
+    };
+  };
+
+  perlDeps = with perl5_.pkgs; [
     AnyEvent
     Carp
     Clone
     CryptOpenSSLRSA
+    CryptOpenSSLBignum
     CryptOpenSSLRandom
     PathTools
     DataDumper
@@ -96,6 +120,7 @@ perl5.pkgs.toPerlModule (
       bash
       coreutils
       diffutils
+      dpkg
       iproute2
       proxmox-backup-client
       systemd
@@ -136,6 +161,10 @@ perl5.pkgs.toPerlModule (
         -e "s|ovs-vsctl|${openvswitch}/bin/ovs-vsctl|" \
         -e "s|/usr/share/zoneinfo|${tzdata}/share/zoneinfo|" \
         -Ee "s|(/usr)?/s?bin/||"
+
+      substituteInPlace $out/${perl5.libPrefix}/${perl5.version}/PVE/Tools.pm \
+        --replace-fail "['dpkg', '--print-architecture']" \
+        "['${dpkg}/bin/dpkg', '--print-architecture']"
     '';
 
     passthru.updateScript = pve-update-script {
