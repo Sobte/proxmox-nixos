@@ -44,7 +44,7 @@ stdenv.mkDerivation rec {
   src = fetchgit {
     url = "git://git.proxmox.com/git/${pname}.git";
     rev = "cb8a660902ffa10d58f41933d26ccd3c46544918";
-    sha256 = "sha256-exJNFCIzFM90qhJNAlDKSFSVy7leuCd1fPHFE/O0Rkg=";
+    sha256 = "sha256-w864zXC0AxKw06lOPshlz0Xy856Mjhm464hFDvoGF0s=";
   };
 
   hardeningDisable = [
