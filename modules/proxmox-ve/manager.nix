@@ -26,6 +26,7 @@ lib.mkIf cfg.enable {
         bashInteractive
         cdrkit
         e2fsprogs
+        gnutar
         swtpm
       ] ++ [ config.boot.zfs.package ];
       serviceConfig = {
@@ -93,6 +94,7 @@ lib.mkIf cfg.enable {
         bashInteractive
         cdrkit
         e2fsprogs
+        gnutar
         swtpm
       ];
       unitConfig = {
@@ -138,6 +140,7 @@ lib.mkIf cfg.enable {
       ];
       path = [
         pkgs.btrfs-progs
+        pkgs.gnutar
         config.boot.zfs.package
       ];
       serviceConfig = {
@@ -161,6 +164,7 @@ lib.mkIf cfg.enable {
       path = [
         pkgs.btrfs-progs
         pkgs.e2fsprogs
+        pkgs.gnutar
         config.boot.zfs.package
       ];
       serviceConfig = {
