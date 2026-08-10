@@ -80,6 +80,11 @@ perl5.pkgs.toPerlModule (
           ]}" \
           --prefix PERL5LIB : $out/${perl5.libPrefix}/${perl5.version}:${perlLibPath}
       done
+
+      # pct shebang runs in taint mode (-T), which makes Perl ignore the
+      # PERL5LIB env var set by wrapProgram above, so PVE::HA modules from
+      # this package never get into @INC and pct fails to start. Drop -T.
+      sed -i 's|env/bin/perl -T|env/bin/perl|' $out/bin/.pct-wrapped
     '';
 
     passthru.updateScript = pve-update-script { };
