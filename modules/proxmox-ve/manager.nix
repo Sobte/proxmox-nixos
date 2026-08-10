@@ -27,6 +27,7 @@ lib.mkIf cfg.enable {
         btrfs-progs
         cdrkit
         pve-storage
+        e2fsprogs
         swtpm
       ] ++ [ config.boot.zfs.package ];
       serviceConfig = {
@@ -93,6 +94,7 @@ lib.mkIf cfg.enable {
       path = with pkgs; [
         bashInteractive
         cdrkit
+        e2fsprogs
         swtpm
       ] ++ [ config.boot.zfs.package ];
       unitConfig = {
@@ -160,6 +162,7 @@ lib.mkIf cfg.enable {
       after = [ "pve-cluster.service" ];
       path = [
         pkgs.btrfs-progs
+        pkgs.e2fsprogs
         config.boot.zfs.package
       ];
       serviceConfig = {
