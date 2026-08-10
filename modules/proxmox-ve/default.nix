@@ -93,7 +93,31 @@ in
       };
       users.groups.www-data = { };
 
-      environment.systemPackages = [ cfg.package ];
+      # Unprivileged containers map their root to the 100000..165535 id
+      # range via newuidmap/newgidmap. Native PVE configures this in its
+      # postinst; do the same here so containers can start without extra
+      # per-node configuration.
+      users.users.root = {
+        subUidRanges = [
+          {
+            startUid = 100000;
+            count = 65536;
+          }
+        ];
+        subGidRanges = [
+          {
+            startGid = 100000;
+            count = 65536;
+          }
+        ];
+      };
+
+      environment.systemPackages = [
+        cfg.package
+        # pct/pve-container invoke lxc-start/lxc-info/lxc-attach/... as
+        # bare commands resolved from PATH.
+        pkgs.lxc
+      ];
       environment.etc.issue.enable = false;
 
       networking.firewall = mkIf cfg.openFirewall {
