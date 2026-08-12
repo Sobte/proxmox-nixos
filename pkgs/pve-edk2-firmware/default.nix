@@ -44,7 +44,14 @@ stdenv.mkDerivation rec {
   src = fetchgit {
     url = "git://git.proxmox.com/git/${pname}.git";
     rev = "cb8a660902ffa10d58f41933d26ccd3c46544918";
-    sha256 = "sha256-w864zXC0AxKw06lOPshlz0Xy856Mjhm464hFDvoGF0s=";
+    # NOTE: refresh with a full clone, e.g.
+    #   nix flake lock --update-input ... (see pve-update-script) or
+    #   nix-prefetch-git --url <url> --rev <rev> --fetch-submodules --no-deepClone=false
+    # A shallow clone (nix-prefetch-git default) can leave nested submodules
+    # (e.g. edk2/UnitTestFrameworkPkg/.../subhook) incomplete and yield a
+    # bogus narHash that never matches on rebuild.
+    sha256 = "sha256-exJNFCIzFM90qhJNAlDKSFSVy7leuCd1fPHFE/O0Rkg=";
+    fetchSubmodules = true;
   };
 
   hardeningDisable = [
