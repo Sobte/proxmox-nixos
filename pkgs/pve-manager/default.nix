@@ -43,6 +43,7 @@
   corosync,
   openssl,
   systemd,
+  gnutar,
   pve-update-script,
 }:
 
@@ -174,6 +175,7 @@ perl5.pkgs.toPerlModule (
 
               ## dependencies of backup and restore
               bash
+              gnutar # GNU tar must shadow busybox's tar applet (needs --totals etc.)
               busybox
               cstream
               lvm2
